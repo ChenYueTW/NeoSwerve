@@ -14,8 +14,8 @@ public final class Constants {
 		public static final double DRIVE_GEAR_RATIO = 57.0 / 7.0; // 齒輪比
 
 		public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
-		public static final double DRIVE_VELOCITY_CONVERSION_FACTOR = 1 / DRIVE_GEAR_RATIO * WHEEL_RADIUS * Math.PI;
-		public static final double DRIVE_POSITION_CONVERSION_FACTOR = 1 / DRIVE_GEAR_RATIO / 60 * WHEEL_RADIUS * Math.PI;
+		public static final double DRIVE_VELOCITY_CONVERSION_FACTOR = WHEEL_RADIUS / DRIVE_GEAR_RATIO * Math.PI;
+		public static final double DRIVE_POSITION_CONVERSION_FACTOR = WHEEL_RADIUS / DRIVE_GEAR_RATIO / 60 * Math.PI;
 	}
 	
 	public static final class MotorReverse {

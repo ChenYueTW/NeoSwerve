@@ -25,28 +25,32 @@ public class SwerveSubsystem extends SubsystemBase{
             Neo.frontLeftTurn,
             Encoder.frontLeft,
             MotorReverse.FRONT_LEFT_DRIVE,
-            MotorReverse.FRONT_LEFT_TURN
+            MotorReverse.FRONT_LEFT_TURN,
+            "frontLeft"
         );
         this.frontRight = new SwerveModule(
             Neo.frontRightDrive,
             Neo.frontRightTurn,
             Encoder.frontRight,
             MotorReverse.FRONT_RIGHT_DRIVE,
-            MotorReverse.FRONT_RIGHT_TURN
+            MotorReverse.FRONT_RIGHT_TURN,
+            "frontRight"
         );
         this.backLeft = new SwerveModule(
             Neo.backwardLeftDrive,
             Neo.backwardLeftTurn,
             Encoder.backwardLeft,
             MotorReverse.BACK_LEFT_DRIVE,
-            MotorReverse.BACK_LEFT_TURN
+            MotorReverse.BACK_LEFT_TURN,
+            "backLeft"
         );
         this.backRight = new SwerveModule(
             Neo.backwardRightDrive,
             Neo.backwardRightTurn,
             Encoder.backwardRight,
             MotorReverse.BACK_RIGHT_DRIVE,
-            MotorReverse.BACK_RIGHT_TURN
+            MotorReverse.BACK_RIGHT_TURN,
+            "backRight"
         );
         this.gyro = new AHRS(SPI.Port.kMXP);
     }
