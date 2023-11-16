@@ -5,11 +5,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.MotorId.Neo;
 import frc.robot.MotorId.Encoder;
 import frc.robot.Constants.MotorReverse;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.EncoderOffset;
 import frc.robot.Constants;
 
 public class SwerveSubsystem extends SubsystemBase{
@@ -26,6 +28,7 @@ public class SwerveSubsystem extends SubsystemBase{
             Encoder.frontLeft,
             MotorReverse.FRONT_LEFT_DRIVE,
             MotorReverse.FRONT_LEFT_TURN,
+            EncoderOffset.FRONT_LEFT,
             "frontLeft"
         );
         this.frontRight = new SwerveModule(
@@ -34,6 +37,7 @@ public class SwerveSubsystem extends SubsystemBase{
             Encoder.frontRight,
             MotorReverse.FRONT_RIGHT_DRIVE,
             MotorReverse.FRONT_RIGHT_TURN,
+            EncoderOffset.FRONT_RIGHT,
             "frontRight"
         );
         this.backLeft = new SwerveModule(
@@ -42,6 +46,7 @@ public class SwerveSubsystem extends SubsystemBase{
             Encoder.backwardLeft,
             MotorReverse.BACK_LEFT_DRIVE,
             MotorReverse.BACK_LEFT_TURN,
+            EncoderOffset.BACK_LEFT,
             "backLeft"
         );
         this.backRight = new SwerveModule(
@@ -50,14 +55,17 @@ public class SwerveSubsystem extends SubsystemBase{
             Encoder.backwardRight,
             MotorReverse.BACK_RIGHT_DRIVE,
             MotorReverse.BACK_RIGHT_TURN,
+            EncoderOffset.BACK_RIGHT,
             "backRight"
         );
-        this.gyro = new AHRS(SPI.Port.kMXP);
+        this.gyro = new AHRS(SerialPort.Port.kUSB);
     }
 
-    public void driveSwerve(double xSpeed, double ySpeed,double rotation) {
-        SwerveModuleState[] state = Constants.swerveDriveKinematics.toSwerveModuleStates(
-            ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotation, this.gyro.getRotation2d())
+    public void driveSwerve(double xSpeed, double ySpeed,double rotation, boolean field) {
+        SwerveModuleState[] state = 
+        Constants.swerveDriveKinematics.toSwerveModuleStates(field ? 
+            ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotation, this.gyro.getRotation2d()) :
+            new ChassisSpeeds(xSpeed, ySpeed, rotation)
         );
         this.setModuleState(state);
     }

@@ -20,13 +20,21 @@ public final class Constants {
 	
 	public static final class MotorReverse {
 		public static final boolean FRONT_LEFT_DRIVE = false;
-		public static final boolean FRONT_LEFT_TURN = true;
 		public static final boolean FRONT_RIGHT_DRIVE = true;
+		public static final boolean BACK_LEFT_DRIVE = false;
+		public static final boolean BACK_RIGHT_DRIVE = true;
+
+		public static final boolean FRONT_LEFT_TURN = true;
 		public static final boolean FRONT_RIGHT_TURN = true;
-		public static final boolean BACK_LEFT_DRIVE = true;
 		public static final boolean BACK_LEFT_TURN = true;
-		public static final boolean BACK_RIGHT_DRIVE = false;
 		public static final boolean BACK_RIGHT_TURN = true;
+	}
+
+	public static final class EncoderOffset {
+		public static final double FRONT_LEFT = 31.3984;
+		public static final double FRONT_RIGHT = 24.8709;
+		public static final double BACK_LEFT = 53.9306;
+		public static final double BACK_RIGHT = 49.8640;
 	}
 
 	public static final SwerveDriveKinematics swerveDriveKinematics = new SwerveDriveKinematics(
@@ -36,5 +44,7 @@ public final class Constants {
             new Translation2d(-Constants.SwerveConstants.WHEEL_BASE / 2, -Constants.SwerveConstants.TRACK_WIDTH / 2)
     );
 
+	public static final double DRIVE_SPEED = 0.4;
+	public static final double TURN_SPEED = 0.6;
     public static final double DEAD_BAND = 0.05;
 }
