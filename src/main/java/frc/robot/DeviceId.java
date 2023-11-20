@@ -1,6 +1,6 @@
 package frc.robot;
 
-public final class MotorId {
+public final class DeviceId {
     public final class Neo {
         public static final int frontLeftDrive = 2;
         public static final int frontRightDrive = 4;

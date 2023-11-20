@@ -19,10 +19,10 @@ public final class Constants {
 	}
 	
 	public static final class MotorReverse {
-		public static final boolean FRONT_LEFT_DRIVE = false;
-		public static final boolean FRONT_RIGHT_DRIVE = true;
-		public static final boolean BACK_LEFT_DRIVE = false;
-		public static final boolean BACK_RIGHT_DRIVE = true;
+		public static final boolean FRONT_LEFT_DRIVE = true;
+		public static final boolean FRONT_RIGHT_DRIVE = false;
+		public static final boolean BACK_LEFT_DRIVE = true;
+		public static final boolean BACK_RIGHT_DRIVE = false;
 
 		public static final boolean FRONT_LEFT_TURN = true;
 		public static final boolean FRONT_RIGHT_TURN = true;
@@ -31,10 +31,10 @@ public final class Constants {
 	}
 
 	public static final class EncoderOffset {
-		public static final double FRONT_LEFT = 31.3984;
-		public static final double FRONT_RIGHT = 24.8709;
-		public static final double BACK_LEFT = 53.9306;
-		public static final double BACK_RIGHT = 49.8640;
+		public static final double FRONT_LEFT = 122.34375;
+		public static final double FRONT_RIGHT = 89.208984375;
+		public static final double BACK_LEFT = 271.7578125;
+		public static final double BACK_RIGHT = 211.640625;
 	}
 
 	public static final SwerveDriveKinematics swerveDriveKinematics = new SwerveDriveKinematics(

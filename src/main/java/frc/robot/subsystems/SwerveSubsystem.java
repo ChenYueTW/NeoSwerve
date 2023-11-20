@@ -7,8 +7,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.MotorId.Neo;
-import frc.robot.MotorId.Encoder;
+import frc.robot.DeviceId.Neo;
+import frc.robot.DeviceId.Encoder;
 import frc.robot.Constants.MotorReverse;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.EncoderOffset;
@@ -61,9 +61,8 @@ public class SwerveSubsystem extends SubsystemBase{
         this.gyro = new AHRS(SerialPort.Port.kUSB);
     }
 
-    public void driveSwerve(double xSpeed, double ySpeed,double rotation, boolean field) {
-        SwerveModuleState[] state = 
-        Constants.swerveDriveKinematics.toSwerveModuleStates(field ? 
+    public void driveSwerve(double xSpeed, double ySpeed, double rotation, boolean field) {
+        SwerveModuleState[] state = Constants.swerveDriveKinematics.toSwerveModuleStates(field ? 
             ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotation, this.gyro.getRotation2d()) :
             new ChassisSpeeds(xSpeed, ySpeed, rotation)
         );
