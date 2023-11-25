@@ -105,6 +105,20 @@ public class SwerveModule implements IDashboardProvider{
         this.turnMotor.set(this.turnOutput);
     }
 
+    public void setAutoDesiredState(SwerveModuleState desiredState) {
+        if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
+            this.stop();
+            return;
+        }
+        SwerveModuleState state = SwerveModuleState.optimize(desiredState, this.getState().angle);
+
+        this.driveOutput = state.speedMetersPerSecond;
+        this.turnOutput = this.turnPidController.calculate(this.getState().angle.getDegrees(), state.angle.getDegrees());
+
+        this.driveMotor.set(this.driveOutput);
+        this.turnMotor.set(this.turnOutput);
+    }
+
     @Override
     public void putDashboard() {
         SmartDashboard.putNumber(this.motorName + " DrivePosition", this.driveEncoder.getPosition());

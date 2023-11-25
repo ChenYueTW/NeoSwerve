@@ -1,10 +1,13 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.DeviceId.Neo;
@@ -20,6 +23,7 @@ public class SwerveSubsystem extends SubsystemBase{
     private final SwerveModule backLeft;
     private final SwerveModule backRight;
     private final AHRS gyro;
+    private final SwerveDriveOdometry odometry;
 
     public SwerveSubsystem() {
         this.frontLeft = new SwerveModule(
@@ -59,6 +63,15 @@ public class SwerveSubsystem extends SubsystemBase{
             "backRight"
         );
         this.gyro = new AHRS(SerialPort.Port.kUSB);
+        this.odometry = new SwerveDriveOdometry(
+            Constants.swerveDriveKinematics, this.gyro.getRotation2d(), this.getModulePosition()
+        );
+        this.gyro.reset();
+    }
+
+    @Override
+    public void periodic() {
+        this.odometry.update(this.gyro.getRotation2d(), getModulePosition());
     }
 
     public void driveSwerve(double xSpeed, double ySpeed, double rotation, boolean field) {
@@ -75,6 +88,36 @@ public class SwerveSubsystem extends SubsystemBase{
         this.frontRight.setDesiredState(states[1]);
         this.backLeft.setDesiredState(states[2]);
         this.backRight.setDesiredState(states[3]);
+    }
+
+    public void setAutoModuleState(ChassisSpeeds speeds) {
+        SwerveModuleState[] state = Constants.swerveDriveKinematics.toSwerveModuleStates(speeds);
+        this.frontLeft.setAutoDesiredState(state[0]);
+        this.frontRight.setAutoDesiredState(state[1]);
+        this.backLeft.setAutoDesiredState(state[2]);
+        this.backRight.setAutoDesiredState(state[3]);
+    }
+
+    public SwerveModuleState[] getModuleState() {
+        return new SwerveModuleState[] {
+            this.frontLeft.getState(),
+            this.frontRight.getState(),
+            this.backLeft.getState(),
+            this.backRight.getState()
+        };
+    }
+
+    public SwerveModulePosition[] getModulePosition() {
+        return new SwerveModulePosition[] {
+            this.frontLeft.getPosition(),
+            this.frontRight.getPosition(),
+            this.backLeft.getPosition(),
+            this.backRight.getPosition()
+        };
+    }
+
+    public Pose2d getPose() {
+        return this.odometry.getPoseMeters();
     }
 
     public void stopModules() {
