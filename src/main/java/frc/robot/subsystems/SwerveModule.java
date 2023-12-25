@@ -3,10 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,10 +12,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.lib.IDashboardProvider;
+import frc.robot.lib.LazySpark;
 
 public class SwerveModule implements IDashboardProvider{
-    private final CANSparkMax driveMotor;
-    private final CANSparkMax turnMotor;
+    private final LazySpark driveMotor;
+    private final LazySpark turnMotor;
 
     private final RelativeEncoder driveEncoder;
     private final CANCoder turnEncoder;
@@ -38,24 +36,13 @@ public class SwerveModule implements IDashboardProvider{
     ){
         this.registerDashboard();
 
-        this.driveMotor = new CANSparkMax(driveMotorPort, MotorType.kBrushless);
-        this.turnMotor = new CANSparkMax(turnMotorPort, MotorType.kBrushless);
+        this.driveMotor = new LazySpark(driveMotorPort, driveMotorReverse);
+        this.turnMotor = new LazySpark(turnMotorPort, turnMotorReverse);
 
         this.driveEncoder = this.driveMotor.getEncoder();
         this.turnEncoder = new CANCoder(turnEncoderPort);
-    
-        // reset
-        this.driveMotor.restoreFactoryDefaults();
-        this.turnMotor.restoreFactoryDefaults();
+
         this.turnEncoder.configFactoryDefault();
-
-        this.driveMotor.setInverted(driveMotorReverse);
-        this.driveMotor.setIdleMode(IdleMode.kBrake);
-        this.driveMotor.setSmartCurrentLimit(30);
-
-        this.turnMotor.setInverted(turnMotorReverse);
-        this.turnMotor.setIdleMode(IdleMode.kBrake);
-        this.turnMotor.setSmartCurrentLimit(30);
 
         this.driveEncoder.setPositionConversionFactor(SwerveConstants.DRIVE_POSITION_CONVERSION_FACTOR);
         this.driveEncoder.setVelocityConversionFactor(SwerveConstants.DRIVE_VELOCITY_CONVERSION_FACTOR);
@@ -63,13 +50,11 @@ public class SwerveModule implements IDashboardProvider{
         this.turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
         this.turnEncoder.configSensorDirection(false);
         this.turnEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
-        // this.turnEncoder.configMagnetOffset(0);
 
-        this.turnPidController = new PIDController(0.01, 0, 0);
+        this.turnPidController = new PIDController(0.01015, 0.0001, 0);
         this.turnPidController.enableContinuousInput(-180, 180);
 
         this.motorName = motorName;
-
         this.turningEncoderOffset = turnEncoderOffset;
     }
 

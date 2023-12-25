@@ -116,6 +116,14 @@ public class SwerveSubsystem extends SubsystemBase{
         };
     }
 
+    public double getPitch() {
+        return this.gyro.getPitch();
+    }
+
+    public double getRoll() {
+        return this.gyro.getRoll();
+    }
+
     public Pose2d getPose() {
         return this.odometry.getPoseMeters();
     }
