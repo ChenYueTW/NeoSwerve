@@ -8,16 +8,18 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.DeviceId.Neo;
+import frc.robot.lib.IDashboardProvider;
 import frc.robot.DeviceId.Encoder;
 import frc.robot.Constants.MotorReverse;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.EncoderOffset;
 import frc.robot.Constants;
 
-public class SwerveSubsystem extends SubsystemBase{
+public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider {
     private final SwerveModule frontLeft;
     private final SwerveModule frontRight;
     private final SwerveModule backLeft;
@@ -26,6 +28,7 @@ public class SwerveSubsystem extends SubsystemBase{
     private final SwerveDriveOdometry odometry;
 
     public SwerveSubsystem() {
+        this.registerDashboard();
         this.frontLeft = new SwerveModule(
             Neo.frontLeftDrive,
             Neo.frontLeftTurn,
@@ -62,7 +65,7 @@ public class SwerveSubsystem extends SubsystemBase{
             EncoderOffset.BACK_RIGHT,
             "backRight"
         );
-        this.gyro = new AHRS(SerialPort.Port.kUSB);
+        this.gyro = new AHRS(SPI.Port.kMXP);
         this.odometry = new SwerveDriveOdometry(
             Constants.swerveDriveKinematics, this.gyro.getRotation2d(), this.getModulePosition()
         );
@@ -74,11 +77,20 @@ public class SwerveSubsystem extends SubsystemBase{
         this.odometry.update(this.gyro.getRotation2d(), getModulePosition());
     }
 
+    public void resetGyro() {
+        this.gyro.reset();
+    }
+
     public void driveSwerve(double xSpeed, double ySpeed, double rotation, boolean field) {
         SwerveModuleState[] state = Constants.swerveDriveKinematics.toSwerveModuleStates(field ? 
             ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotation, this.gyro.getRotation2d()) :
             new ChassisSpeeds(xSpeed, ySpeed, rotation)
         );
+        this.setModuleState(state);
+    }
+
+    public void autoDriveSwerve(ChassisSpeeds relativeSpeed) {
+        SwerveModuleState[] state = Constants.swerveDriveKinematics.toSwerveModuleStates(relativeSpeed);
         this.setModuleState(state);
     }
 
@@ -88,14 +100,6 @@ public class SwerveSubsystem extends SubsystemBase{
         this.frontRight.setDesiredState(states[1]);
         this.backLeft.setDesiredState(states[2]);
         this.backRight.setDesiredState(states[3]);
-    }
-
-    public void setAutoModuleState(ChassisSpeeds speeds) {
-        SwerveModuleState[] state = Constants.swerveDriveKinematics.toSwerveModuleStates(speeds);
-        this.frontLeft.setAutoDesiredState(state[0]);
-        this.frontRight.setAutoDesiredState(state[1]);
-        this.backLeft.setAutoDesiredState(state[2]);
-        this.backRight.setAutoDesiredState(state[3]);
     }
 
     public SwerveModuleState[] getModuleState() {
@@ -116,16 +120,12 @@ public class SwerveSubsystem extends SubsystemBase{
         };
     }
 
-    public double getPitch() {
-        return this.gyro.getPitch();
-    }
-
-    public double getRoll() {
-        return this.gyro.getRoll();
-    }
-
     public Pose2d getPose() {
         return this.odometry.getPoseMeters();
+    }
+
+    public ChassisSpeeds getSpeeds() {
+        return Constants.swerveDriveKinematics.toChassisSpeeds(this.getModuleState());
     }
 
     public void stopModules() {
@@ -133,5 +133,19 @@ public class SwerveSubsystem extends SubsystemBase{
         this.frontRight.stop();
         this.backLeft.stop();
         this.backRight.stop();
+    }
+
+    public double[] getLinearAccel() {
+        return new double[] {
+            this.gyro.getWorldLinearAccelX(),
+            this.gyro.getWorldLinearAccelY(),
+            this.gyro.getWorldLinearAccelZ()
+        };
+    }
+
+    @Override
+    public void putDashboard() {
+        SmartDashboard.putBoolean("IsMoving", this.gyro.isMoving());
+        SmartDashboard.putNumberArray("WorldLinearAccel", this.getLinearAccel());
     }
 }

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.SwerveDriveCmd;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.Auto.AutoDrive;
 import frc.robot.Auto.AutoTrackCmd;
 
 public class RobotContainer {
@@ -11,14 +12,12 @@ public class RobotContainer {
 	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 	private final SwerveDriveCmd swerveDriveCmd = new SwerveDriveCmd(swerveSubsystem, joystick);
 	private final Limelight limelight = new Limelight();
-	// private final AutoDrive autoDrive = new AutoDrive(swerveSubsystem);
-	// private final AutoBalance autoBalance = new AutoBalance(swerveSubsystem);
 
 	public RobotContainer() {
 		this.swerveSubsystem.setDefaultCommand(this.swerveDriveCmd);
 	}
 
 	public Command getAutonomousCommand() {
-		return new AutoTrackCmd(swerveSubsystem, limelight, joystick);
+		return new AutoDrive(this.swerveSubsystem);
 	}
 }
